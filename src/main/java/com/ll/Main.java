@@ -1,15 +1,27 @@
 package com.ll;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
 public class Main {
-    public static void main(String[] args) {
+
+    public static void main(String[] args){
         int sequence = 1;
         Map<Integer,Say> map = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
+
+        try{
+            map = load();
+        } catch (Exception e) {
+            System.out.println("cannot find save files.");
+        }
 
         System.out.println("===명언 앱===");
         while(true){
@@ -20,6 +32,7 @@ public class Main {
             String action = cmdArr[0];
 
             if(action.contains("종료")){ // 1단계
+                save(map);
                 System.exit(0);
             }
             if(action.contains("등록")){ // 2단계
@@ -80,5 +93,44 @@ public class Main {
             }
 
         }
+    }
+
+    public static String mapToJson(Map<Integer,Say> map) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Say> sayList = new ArrayList<>();
+        for (Say data : map.values()) {
+            sayList.add(data);
+        }
+        return objectMapper.writeValueAsString(sayList);
+    }
+
+    public static boolean save(Map<Integer, Say> map) {
+        try {
+            FileWriter fileWriter = new FileWriter("save.json");
+            fileWriter.write(mapToJson(map));
+            fileWriter.flush();
+            fileWriter.close();
+            return true;
+        }catch (Exception e){
+            System.out.println("save failed. try again");
+            return false;
+        }
+    }
+    public static Map<Integer,Say> load() throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // json file to String
+        String path = "save.json";
+        String jsonFile = Files.readString(Path.of(path));
+
+        // json string to List<Obj>
+        List<Say> list = objectMapper.readValue(jsonFile, new TypeReference<List<Say>>() {});
+
+        // Object List to Map
+        Map<Integer,Say> map = new HashMap<>();
+        for (Say data : list) {
+            map.put(data.getId(),data);
+        }
+        return map;
     }
 }
