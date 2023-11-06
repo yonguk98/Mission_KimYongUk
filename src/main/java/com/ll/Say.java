@@ -14,4 +14,5 @@ public class Say {
         this.content = content;
         this.writer = writer;
     }
+    public Say(){}
 }
