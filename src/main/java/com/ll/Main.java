@@ -33,6 +33,8 @@ public class Main {
                 sequence++; // 4단계
             }
             if(action.contains("목록")){ // 5단계
+                System.out.println("번호 / 작가 / 명언");
+                System.out.println("-------------------");
                 for (Say say : map.values()) {
                     System.out.println(say.getId()+" / "+say.getWriter()+" / "+say.getContent());
                 }
