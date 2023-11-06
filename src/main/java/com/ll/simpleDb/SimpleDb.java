@@ -30,6 +30,7 @@ public class SimpleDb {
         return new Sql(this);
     }
 
+
     public void run(String s, Object... objects){
         Connection connection;
         try {
