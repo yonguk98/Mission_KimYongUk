@@ -32,8 +32,11 @@ public class Main {
             String action = cmdArr[0];
 
             if(action.contains("종료")){ // 1단계
-                save(map);
                 System.exit(0);
+            }
+            if(action.contains("빌드")){
+                save(map);
+                System.out.println("save.json 파일의 내용이 갱신되었습니다.");
             }
             if(action.contains("등록")){ // 2단계
                 System.out.print("명언 : ");
