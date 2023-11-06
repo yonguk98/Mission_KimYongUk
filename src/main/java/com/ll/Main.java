@@ -16,6 +16,8 @@ public class Main {
             System.out.print("명령) ");
             String cmd = scanner.next();
 
+            String[] cmdArr = cmd.split("\\?");
+
             if(cmd.contains("종료")){ // 1단계
                 System.exit(0);
             }
@@ -35,13 +37,18 @@ public class Main {
                 }
             }
             if(cmd.contains("삭제")){ // 6,7 단계
-                String[] cmdBits = cmd.split("\\?");
-                Integer id = Integer.parseInt(cmdBits[1].split("id=",-1)[1].trim());
+                Integer id = null;
+                try {
+                    id = Integer.parseInt(cmdArr[1].split("id=",-1)[1].trim());
+                }catch (Exception e){
+                    System.out.println("id parsing error");
+                }
 
                 if(!id.equals(null)){
                     if(map.containsKey(id)) {
                         map.remove(id);
                         System.out.println(id + "번 명언이 삭제되었습니다.");
+
                     }else{
                         System.out.println(id + "번 명언은 존재하지 않습니다.");
                     }
