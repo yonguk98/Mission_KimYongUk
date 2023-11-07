@@ -43,7 +43,7 @@ public class Sql {
         }
         sb.append(sql.replaceFirst("\\?",s) + " ");
         objectList.add(list);
-        this.longList = list;
+        longList.addAll(list);
         return this;
     }
 
@@ -134,9 +134,24 @@ public class Sql {
         }
         return id;
     }
-//    public List<Long> selectLongs(){
-//
-//    }
+    public List<Long> selectLongs(){
+        List<Long> list = new ArrayList<>();
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
+            int j = 0;
+            for (Long l: longList) {
+                preparedStatement.setObject(j+1,l);
+                j++;
+            }
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
+                list.add(rs.getLong(1));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
 
     public String selectString(){
         String resultString = "";
