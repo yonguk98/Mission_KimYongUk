@@ -4,8 +4,9 @@ import com.ll.model.Command;
 
 public class Request {
     public Command findCmd(String input){
+        String action = input.split("\\?")[0];
         for (Command value : Command.values()) {
-            if(input.contains(value.getKr())){
+            if(action.equals(value.getKr())){
                 return value;
             }
         }
