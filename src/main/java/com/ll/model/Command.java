@@ -1,4 +1,4 @@
-package org.example.model;
+package com.ll.model;
 
 public enum Command {
     List("목록"),Add("등록"),Update("수정"),Delete("삭제"),Quit("종료"),None("오류");
