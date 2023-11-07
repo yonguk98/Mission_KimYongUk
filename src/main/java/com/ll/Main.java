@@ -3,6 +3,7 @@ package com.ll;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ll.model.Say;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,7 +15,7 @@ public class Main {
 
     public static void main(String[] args){
         int sequence = 1;
-        Map<Integer,Say> map = new HashMap<>();
+        Map<Integer, Say> map = new HashMap<>();
         Scanner scanner = new Scanner(System.in);
 
         try{

@@ -1,4 +1,4 @@
-package com.ll;
+package com.ll.model;
 
 import lombok.Getter;
 import lombok.Setter;
