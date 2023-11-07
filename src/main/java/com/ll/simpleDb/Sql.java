@@ -57,7 +57,6 @@ public class Sql {
             preparedStatement.executeUpdate();
             ResultSet rs = preparedStatement.executeQuery("select * from article");
             while(rs.next()){
-//                System.out.println(rs.getInt(1) + "\t" + rs.getString(4) + " " + rs.getString(5));
                 id = rs.getLong(1);
             }
 
@@ -170,14 +169,15 @@ public class Sql {
     public Map<String ,Object> selectRow(){
         Map<String,Object> map = new HashMap<>();
         try{
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(sb.toString());
+            PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
+            for (int i = 0; i < objectList.size(); i++) {
+                preparedStatement.setObject(i+1,objectList.get(i));
+            }
+            ResultSet rs = preparedStatement.executeQuery();
             ResultSetMetaData metaData = rs.getMetaData();
             int columns = metaData.getColumnCount();
             rs.next();
             for (int i = 0; i < columns; i++) {
-                System.out.print(metaData.getColumnName(i + 1) + " ");
-                System.out.println(rs.getObject(i + 1));
                 map.put(metaData.getColumnName(i + 1), rs.getObject(i + 1));
             }
             connection.close();
@@ -196,8 +196,6 @@ public class Sql {
             int columns = metaData.getColumnCount();
             while(rs.next()){
                 for (int i = 0; i < columns; i++) {
-                    System.out.print(metaData.getColumnName(i + 1) + " ");
-                    System.out.println(rs.getObject(i + 1));
                     map.put(metaData.getColumnName(i + 1), rs.getObject(i + 1));
                 }
             }
@@ -219,8 +217,6 @@ public class Sql {
             int columns = metaData.getColumnCount();
             while(rs.next()){
                 for (int i = 0; i < columns; i++) {
-                    System.out.print(metaData.getColumnName(i + 1) + " ");
-                    System.out.println(rs.getObject(i + 1));
                     map.put(metaData.getColumnName(i + 1), rs.getObject(i + 1));
                 }
                 list.add(new Article(map));
