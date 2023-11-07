@@ -13,6 +13,7 @@ public class Sql {
     private StringBuilder sb;
     private Connection connection;
     private List<Object> objectList;
+    private List<Long> longList;
 
     public Sql(SimpleDb simpleDb) {
         this.simpleDb = simpleDb;
@@ -23,13 +24,9 @@ public class Sql {
             throw new RuntimeException(e);
         }
         this.objectList = new ArrayList<>();
+        this.longList = new ArrayList<>();
 
     }
-
-//    public Sql append(String sql){
-//        sb.append(sql + " ");
-//        return this;
-//    }
 
     public Sql append(String sql, Object... objects) {
         sb.append(sql + " ");
@@ -40,8 +37,13 @@ public class Sql {
     }
 
     public Sql appendIn(String sql, List<Long> list){
-        sb.append(sql + " ");
+        String s = "?";
+        for (int i = 0; i < list.size()-1; i++) {
+            s = s.concat(", ?");
+        }
+        sb.append(sql.replaceFirst("\\?",s) + " ");
         objectList.add(list);
+        this.longList = list;
         return this;
     }
 
@@ -111,9 +113,20 @@ public class Sql {
     public long selectLong(){
         long id = -1;
         try{
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(sb.toString());
-            if(rs.next()){
+            PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
+            int j = 0;
+            for (int i = 0; i < objectList.size(); i++) {
+                if(objectList.get(i) instanceof List<?>){
+                    for (Long l: longList) {
+                        preparedStatement.setObject(i+j+1,l);
+                        j++;
+                    }
+                }else{
+                    preparedStatement.setObject(i+j+1, objectList.get(i));
+                }
+            }
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()){
                 id = rs.getLong(1);
             }
         } catch (SQLException e) {
@@ -121,6 +134,9 @@ public class Sql {
         }
         return id;
     }
+//    public List<Long> selectLongs(){
+//
+//    }
 
     public String selectString(){
         String resultString = "";

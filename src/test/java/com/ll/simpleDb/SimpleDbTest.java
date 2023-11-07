@@ -8,6 +8,7 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -251,63 +252,63 @@ public class SimpleDbTest {
             assertThat(articleDto.isBlind()).isFalse();
         });
     }
-//
-//    @Test
-//    public void selectBind() {
-//        Sql sql = simpleDb.genSql();
-//        /*
-//        == rawSql ==
-//        SELECT COUNT(*)
-//        FROM article
-//        WHERE id BETWEEN '1' AND '3'
-//        AND title LIKE CONCAT('%', '제목' '%')
-//        */
-//        sql.append("SELECT COUNT(*)")
-//                .append("FROM article")
-//                .append("WHERE id BETWEEN ? AND ?", 1, 3)
-//                .append("AND title LIKE CONCAT('%', ? '%')", "제목");
-//
-//        long count = sql.selectLong();
-//
-//        assertThat(count).isEqualTo(3);
-//    }
-//
-//    @Test
-//    public void selectIn() {
-//        Sql sql = simpleDb.genSql();
-//        /*
-//        == rawSql ==
-//        SELECT COUNT(*)
-//        FROM article
-//        WHERE id IN ('1','2','3')
-//        */
-//        sql.append("SELECT COUNT(*)")
-//                .append("FROM article")
-//                .appendIn("WHERE id IN (?)", Arrays.asList(1L, 2L, 3L));
-//
-//        long count = sql.selectLong();
-//
-//        assertThat(count).isEqualTo(3);
-//    }
-//
-//    @Test
-//    public void selectOrderByField() {
-//        List<Long> ids = Arrays.asList(2L, 3L, 1L);
-//
-//        Sql sql = simpleDb.genSql();
-//        /*
-//        SELECT id
-//        FROM article
-//        WHERE id IN ('2','3','1')
-//        ORDER BY FIELD (id, '2','3','1')
-//        */
-//        sql.append("SELECT id")
-//                .append("FROM article")
-//                .appendIn("WHERE id IN (?)", ids)
-//                .appendIn("ORDER BY FIELD (id, ?)", ids);
-//
-//        List<Long> foundIds = sql.selectLongs();
-//
-//        assertThat(foundIds).isEqualTo(ids);
-//    }
+
+    @Test
+    public void selectBind() {
+        Sql sql = simpleDb.genSql();
+        /*
+        == rawSql ==
+        SELECT COUNT(*)
+        FROM article
+        WHERE id BETWEEN '1' AND '3'
+        AND title LIKE CONCAT('%', '제목' '%')
+        */
+        sql.append("SELECT COUNT(*)")
+                .append("FROM article")
+                .append("WHERE id BETWEEN ? AND ?", 1, 3)
+                .append("AND title LIKE CONCAT('%', ? '%')", "제목");
+
+        long count = sql.selectLong();
+
+        assertThat(count).isEqualTo(3);
+    }
+
+    @Test
+    public void selectIn() {
+        Sql sql = simpleDb.genSql();
+        /*
+        == rawSql ==
+        SELECT COUNT(*)
+        FROM article
+        WHERE id IN ('1','2','3')
+        */
+        sql.append("SELECT COUNT(*)")
+                .append("FROM article")
+                .appendIn("WHERE id IN (?)", Arrays.asList(1L, 2L, 3L));
+
+        long count = sql.selectLong();
+
+        assertThat(count).isEqualTo(3);
+    }
+
+    @Test
+    public void selectOrderByField() {
+        List<Long> ids = Arrays.asList(2L, 3L, 1L);
+
+        Sql sql = simpleDb.genSql();
+        /*
+        SELECT id
+        FROM article
+        WHERE id IN ('2','3','1')
+        ORDER BY FIELD (id, '2','3','1')
+        */
+        sql.append("SELECT id")
+                .append("FROM article")
+                .appendIn("WHERE id IN (?)", ids)
+                .appendIn("ORDER BY FIELD (id, ?)", ids);
+
+        List<Long> foundIds = sql.selectLongs();
+
+        assertThat(foundIds).isEqualTo(ids);
+    }
 }
