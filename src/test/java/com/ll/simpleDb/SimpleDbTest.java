@@ -8,6 +8,8 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -185,70 +187,70 @@ public class SimpleDbTest {
         assertThat(title).isEqualTo("제목1");
     }
 
-//    @Test
-//    public void selectRow() {
-//        Sql sql = simpleDb.genSql();
-//        /*
-//        == rawSql ==
-//        SELECT *
-//        FROM article
-//        WHERE id = 1
-//        */
-//        sql.append("SELECT * FROM article WHERE id = 1");
-//        Map<String, Object> articleMap = sql.selectRow();
-//
-//        assertThat(articleMap.get("id")).isEqualTo(1L);
-//        assertThat(articleMap.get("title")).isEqualTo("제목1");
-//        assertThat(articleMap.get("body")).isEqualTo("내용1");
-//        assertThat(articleMap.get("createdDate")).isInstanceOf(LocalDateTime.class);
-//        assertThat(articleMap.get("modifiedDate")).isInstanceOf(LocalDateTime.class);
-//        assertThat(articleMap.get("isBlind")).isEqualTo(false);
-//    }
-//
-//    @Test
-//    public void selectArticle() {
-//        Sql sql = simpleDb.genSql();
-//        /*
-//        == rawSql ==
-//        SELECT * FROM article WHERE id = 1
-//        */
-//        sql.append("SELECT * FROM article WHERE id = 1");
-//        Article article = sql.selectRow(Article.class);
-//
-//        assertThat(article.getId()).isEqualTo(1L);
-//        assertThat(article.getTitle()).isEqualTo("제목1");
-//        assertThat(article.getBody()).isEqualTo("내용1");
-//        assertThat(article.getCreatedDate()).isNotNull();
-//        assertThat(article.getModifiedDate()).isNotNull();
-//        assertThat(article.isBlind()).isFalse();
-//    }
-//
-//    @Test
-//    public void selectArticles() {
-//        Sql sql = simpleDb.genSql();
-//        /*
-//        == rawSql ==
-//        SELECT *
-//        FROM article
-//        ORDER BY id ASC
-//        LIMIT 3
-//        */
-//        sql.append("SELECT * FROM article ORDER BY id ASC LIMIT 3");
-//        List<Article> articleDtoList = sql.selectRows(Article.class);
-//
-//        IntStream.range(0, articleDtoList.size()).forEach(i -> {
-//            long id = i + 1;
-//
-//            Article articleDto = articleDtoList.get(i);
-//
-//            assertThat(articleDto.getId()).isEqualTo(id);
-//            assertThat(articleDto.getTitle()).isEqualTo("제목%d".formatted(id));
-//            assertThat(articleDto.getBody()).isEqualTo("내용%d".formatted(id));
-//            assertThat(articleDto.getCreatedDate()).isNotNull();
-//            assertThat(articleDto.getModifiedDate()).isNotNull();
-//            assertThat(articleDto.isBlind()).isFalse();
-//        });
-//    }
+    @Test
+    public void selectRow() {
+        Sql sql = simpleDb.genSql();
+        /*
+        == rawSql ==
+        SELECT *
+        FROM article
+        WHERE id = 1
+        */
+        sql.append("SELECT * FROM article WHERE id = 1");
+        Map<String, Object> articleMap = sql.selectRow();
+
+        assertThat(articleMap.get("id")).isEqualTo(1L);
+        assertThat(articleMap.get("title")).isEqualTo("제목1");
+        assertThat(articleMap.get("body")).isEqualTo("내용1");
+        assertThat(articleMap.get("createdDate")).isInstanceOf(LocalDateTime.class);
+        assertThat(articleMap.get("modifiedDate")).isInstanceOf(LocalDateTime.class);
+        assertThat(articleMap.get("isBlind")).isEqualTo(false);
+    }
+
+    @Test
+    public void selectArticle() {
+        Sql sql = simpleDb.genSql();
+        /*
+        == rawSql ==
+        SELECT * FROM article WHERE id = 1
+        */
+        sql.append("SELECT * FROM article WHERE id = 1");
+        Article article = sql.selectRow(Article.class);
+
+        assertThat(article.getId()).isEqualTo(1L);
+        assertThat(article.getTitle()).isEqualTo("제목1");
+        assertThat(article.getBody()).isEqualTo("내용1");
+        assertThat(article.getCreatedDate()).isNotNull();
+        assertThat(article.getModifiedDate()).isNotNull();
+        assertThat(article.isBlind()).isFalse();
+    }
+
+    @Test
+    public void selectArticles() {
+        Sql sql = simpleDb.genSql();
+        /*
+        == rawSql ==
+        SELECT *
+        FROM article
+        ORDER BY id ASC
+        LIMIT 3
+        */
+        sql.append("SELECT * FROM article ORDER BY id ASC LIMIT 3");
+        List<Article> articleDtoList = sql.selectRows(Article.class);
+
+        IntStream.range(0, articleDtoList.size()).forEach(i -> {
+            long id = i + 1;
+
+            Article articleDto = articleDtoList.get(i);
+
+            assertThat(articleDto.getId()).isEqualTo(id);
+            assertThat(articleDto.getTitle()).isEqualTo("제목%d".formatted(id));
+            assertThat(articleDto.getBody()).isEqualTo("내용%d".formatted(id));
+            assertThat(articleDto.getCreatedDate()).isNotNull();
+            assertThat(articleDto.getModifiedDate()).isNotNull();
+            assertThat(articleDto.isBlind()).isFalse();
+        });
+    }
 //
 //    @Test
 //    public void selectBind() {
