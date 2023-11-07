@@ -47,138 +47,194 @@ public class Sql {
         return this;
     }
 
-    public long insert(){
-        long id = 0L;
-        try{
-            PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
-            for (int i = 0; i < objectList.size(); i++) {
-                preparedStatement.setObject(i+1,objectList.get(i));
-            }
-            preparedStatement.executeUpdate();
-            ResultSet rs = preparedStatement.executeQuery("select * from article");
-            while(rs.next()){
-                id = rs.getLong(1);
-            }
 
+    private PreparedStatement createState(){
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
+            return preparedStatement;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return id;
+    }
+
+    private void setObject(PreparedStatement st){
+        try {
+            for (int i = 0; i < objectList.size(); i++) {
+                st.setObject(i + 1, objectList.get(i));
+            }
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private int setObjectList(PreparedStatement preparedStatement,int i, int j){
+        for (Long l: longList) {
+            try {
+                preparedStatement.setObject(i+j+1,l);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            j++;
+        }
+        return j;
+    }
+
+    private void executeUpdate(PreparedStatement st){
+        try {
+            st.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private ResultSet executeQuery(PreparedStatement st, String sql){
+        ResultSet rs;
+        try {
+            rs = st.executeQuery(sql);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return rs;
+    }
+    private ResultSet executeQuery(PreparedStatement st){
+        ResultSet rs;
+        try {
+            rs = st.executeQuery();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return rs;
+    }
+    private boolean next(ResultSet rs){
+        try {
+            return rs.next();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private long getLong(ResultSet rs){
+        try {
+            return rs.getLong(1);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private long getUpdateCount(PreparedStatement st){
+        try {
+            return st.getUpdateCount();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private String getString(ResultSet rs){
+        String result="";
+        try{
+            if(rs.next()){
+                return rs.getString(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+//    private <T> T getObject(Class<T> c){
+//
+//    }
+
+    public long insert(){
+
+        PreparedStatement preparedStatement = createState();
+        setObject(preparedStatement);
+        executeUpdate(preparedStatement);
+        ResultSet rs = executeQuery(preparedStatement, "select * from article");
+
+        while(next(rs)){
+            return getLong(rs);
+        }
+        return -1L;
     }
 
     public long update(){
-        long count = -1;
-        try{
-            PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
-            for (int i = 0; i < objectList.size(); i++) {
-                preparedStatement.setObject(i+1,objectList.get(i));
-            }
-            preparedStatement.executeUpdate();
-            count = preparedStatement.getUpdateCount();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return count;
+        PreparedStatement preparedStatement = createState();
+        setObject(preparedStatement);
+        executeUpdate(preparedStatement);
+        return getUpdateCount(preparedStatement);
     }
 
     public long delete(){
-        long count = -1;
-        try{
-            PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
-            for (int i = 0; i < objectList.size(); i++) {
-                preparedStatement.setObject(i+1,objectList.get(i));
-            }
-            preparedStatement.executeUpdate();
-            count = preparedStatement.getUpdateCount();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return count;
+        PreparedStatement preparedStatement = createState();
+        setObject(preparedStatement);
+        executeUpdate(preparedStatement);
+        return getUpdateCount(preparedStatement);
     }
 
     public LocalDateTime selectDatetime(){
         LocalDateTime localDateTime=null;
-        try{
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(sb.toString());
-            if(rs.next()){
+        PreparedStatement preparedStatement = createState();
+
+        ResultSet rs = executeQuery(preparedStatement,sb.toString());
+
+        if(next(rs)){
+            try {
                 localDateTime = rs.getObject(1, LocalDateTime.class);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
         return localDateTime;
     }
     public long selectLong(){
-        long id = -1;
-        try{
-            PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
-            int j = 0;
-            for (int i = 0; i < objectList.size(); i++) {
-                if(objectList.get(i) instanceof List<?>){
-                    for (Long l: longList) {
-                        preparedStatement.setObject(i+j+1,l);
-                        j++;
-                    }
-                }else{
-                    preparedStatement.setObject(i+j+1, objectList.get(i));
+        PreparedStatement preparedStatement = createState();
+        int j = 0;
+        for (int i = 0; i < objectList.size(); i++) {
+            if (objectList.get(i) instanceof List<?>) {setObjectList(preparedStatement, i, j);}
+            else {
+                try {
+                    preparedStatement.setObject(i + j + 1, objectList.get(i));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
-            ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()){
-                id = rs.getLong(1);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
-        return id;
+        ResultSet rs = executeQuery(preparedStatement);
+        while(next(rs)){
+            return getLong(rs);
+        }
+        return -1L;
     }
     public List<Long> selectLongs(){
+        PreparedStatement preparedStatement = createState();
+        setObjectList(preparedStatement,0,0);
+        ResultSet rs = executeQuery(preparedStatement);
+
         List<Long> list = new ArrayList<>();
-        try{
-            PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
-            int j = 0;
-            for (Long l: longList) {
-                preparedStatement.setObject(j+1,l);
-                j++;
-            }
-            ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()){
-                list.add(rs.getLong(1));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        while(next(rs)){
+            list.add(getLong(rs));
         }
         return list;
     }
 
     public String selectString(){
-        String resultString = "";
-        try{
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(sb.toString());
-            if(rs.next()){
-                resultString = rs.getString(1);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return resultString;
+        PreparedStatement preparedStatement = createState();
+        ResultSet rs = executeQuery(preparedStatement);
+        return getString(rs);
     }
 
     public Map<String ,Object> selectRow(){
         Map<String,Object> map = new HashMap<>();
+
+        PreparedStatement preparedStatement = createState();
+        setObject(preparedStatement);
+        ResultSet rs = executeQuery(preparedStatement);
+
         try{
-            PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
-            for (int i = 0; i < objectList.size(); i++) {
-                preparedStatement.setObject(i+1,objectList.get(i));
-            }
-            ResultSet rs = preparedStatement.executeQuery();
             ResultSetMetaData metaData = rs.getMetaData();
             int columns = metaData.getColumnCount();
-            rs.next();
-            for (int i = 0; i < columns; i++) {
-                map.put(metaData.getColumnName(i + 1), rs.getObject(i + 1));
+            while(rs.next()) {
+                for (int i = 0; i < columns; i++) {
+                    map.put(metaData.getColumnName(i + 1), rs.getObject(i + 1));
+                }
             }
             connection.close();
         } catch (SQLException e) {
@@ -188,31 +244,19 @@ public class Sql {
     }
 
     public Article selectRow(Class c){
-        Map<String,Object> map = new HashMap<>();
-        try{
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(sb.toString());
-            ResultSetMetaData metaData = rs.getMetaData();
-            int columns = metaData.getColumnCount();
-            while(rs.next()){
-                for (int i = 0; i < columns; i++) {
-                    map.put(metaData.getColumnName(i + 1), rs.getObject(i + 1));
-                }
-            }
-            connection.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return new Article(map);
+        return new Article(selectRow());
     }
 
 
     public List<Article> selectRows(Class c){
         Map<String,Object> map = new HashMap<>();
         List<Article> list = new ArrayList<>();
+
+        PreparedStatement preparedStatement = createState();
+        setObject(preparedStatement);
+        ResultSet rs = executeQuery(preparedStatement);
+
         try{
-            Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery(sb.toString());
             ResultSetMetaData metaData = rs.getMetaData();
             int columns = metaData.getColumnCount();
             while(rs.next()){
