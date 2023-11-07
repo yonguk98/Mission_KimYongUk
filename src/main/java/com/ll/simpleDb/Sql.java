@@ -18,14 +18,17 @@ public class Sql {
     public Sql(SimpleDb simpleDb) {
         this.simpleDb = simpleDb;
         this.sb = new StringBuilder();
+        this.objectList = new ArrayList<>();
+        this.longList = new ArrayList<>();
+        createConnection();
+
+    }
+    private void createConnection(){
         try {
             this.connection = simpleDb.connection();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        this.objectList = new ArrayList<>();
-        this.longList = new ArrayList<>();
-
     }
 
     public Sql append(String sql, Object... objects) {
@@ -137,10 +140,6 @@ public class Sql {
         }
         return result;
     }
-
-//    private <T> T getObject(Class<T> c){
-//
-//    }
 
     public long insert(){
 
