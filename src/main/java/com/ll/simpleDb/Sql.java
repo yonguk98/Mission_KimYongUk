@@ -2,6 +2,7 @@ package com.ll.simpleDb;
 
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +63,74 @@ public class Sql {
         return id;
     }
 
-//    public long update(){
-//
-//    }
+    public long update(){
+        long count = -1;
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
+            for (int i = 0; i < objectList.size(); i++) {
+                preparedStatement.setObject(i+1,objectList.get(i));
+            }
+            preparedStatement.executeUpdate();
+            count = preparedStatement.getUpdateCount();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return count;
+    }
+
+    public long delete(){
+        long count = -1;
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(sb.toString());
+            for (int i = 0; i < objectList.size(); i++) {
+                preparedStatement.setObject(i+1,objectList.get(i));
+            }
+            preparedStatement.executeUpdate();
+            count = preparedStatement.getUpdateCount();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return count;
+    }
+
+    public LocalDateTime selectDatetime(){
+        LocalDateTime localDateTime=null;
+        try{
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sb.toString());
+            if(rs.next()){
+                localDateTime = rs.getObject(1, LocalDateTime.class);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return localDateTime;
+    }
+    public long selectLong(){
+        long id = -1;
+        try{
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sb.toString());
+            if(rs.next()){
+                id = rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return id;
+    }
+
+    public String selectString(){
+        String resultString = "";
+        try{
+            Statement statement = connection.createStatement();
+            ResultSet rs = statement.executeQuery(sb.toString());
+            if(rs.next()){
+                resultString = rs.getString(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return resultString;
+    }
 }
