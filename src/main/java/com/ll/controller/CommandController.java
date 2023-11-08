@@ -51,11 +51,11 @@ public class CommandController {
                 String inputWriter = scanner.next();
 
                 long count = sayService.updateSay(inputId,inputWriter,inputContent);
-                System.out.println(count + "개의 명언이 수정되었습니다."); // 갯수말고 번호로 수정필요
+                System.out.println(inputId + "번 명언이 수정되었습니다.");
             }
             case Delete -> {
                 long id = sayService.deleteSay(inputId);
-                System.out.println(id + "번 명언이 삭제되었습니다.");
+                System.out.println(inputId + "번 명언이 삭제되었습니다.");
             }
             case Quit -> System.exit(0);
             case None -> System.out.println("명령어를 다시 입력해주세요.");

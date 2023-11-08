@@ -129,6 +129,8 @@ public class Sql {
             throw new RuntimeException(e);
         }
     }
+
+
     private String getString(ResultSet rs){
         String result="";
         try{
@@ -146,7 +148,7 @@ public class Sql {
         PreparedStatement preparedStatement = createState();
         setObject(preparedStatement);
         executeUpdate(preparedStatement);
-        ResultSet rs = executeQuery(preparedStatement, "select * from article");
+        ResultSet rs = executeQuery(preparedStatement, "select id from article order by id desc limit 1");
 
         while(next(rs)){
             return getLong(rs);
