@@ -22,7 +22,7 @@ public class CommandController {
         System.out.print("명령) ");
         String input = scanner.nextLine();
 
-        String[] inputString = input.split("\\?",0);
+        String[] inputString = input.split("\\?",-1);
         Command cmd = request.findCmd(inputString[0]);
 
         switch (cmd){
