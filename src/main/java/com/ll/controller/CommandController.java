@@ -39,7 +39,7 @@ public class CommandController {
             case Update -> {
                 Long inputId;
                 try {
-                    inputId = request.getIdParam(inputString[2]);
+                    inputId = request.getIdParam(inputString[1]);
                 }catch (Exception e){
                     System.out.println("수정할 명언의 번호를 입력해주세요.");
                     break;
@@ -67,7 +67,7 @@ public class CommandController {
             case Delete -> {
                 Long inputId;
                 try {
-                    inputId = request.getIdParam(inputString[2]);
+                    inputId = request.getIdParam(inputString[1]);
                 }catch (Exception e){
                     System.out.println("삭제할 명언의 번호를 입력해주세요.");
                     break;
