@@ -1,4 +1,4 @@
-package com.ll.simpleDb;
+package com.ll.model;
 
 import lombok.Data;
 

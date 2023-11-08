@@ -1,6 +1,6 @@
 package com.ll.service;
 
-import com.ll.simpleDb.Article;
+import com.ll.model.Article;
 import com.ll.simpleDb.SimpleDb;
 import com.ll.simpleDb.Sql;
 

@@ -2,7 +2,7 @@ package com.ll.controller;
 
 import com.ll.model.Command;
 import com.ll.service.SayService;
-import com.ll.simpleDb.Article;
+import com.ll.model.Article;
 
 import java.util.Scanner;
 
@@ -56,7 +56,7 @@ public class CommandController {
                 System.out.println(inputId
                         + (sayService.updateSay(inputId,inputWriter,inputContent) == null
                         ? "번 명언은 존재하지 않습니다."
-                        : "번 명언이 삭제되었습니다."));
+                        : "번 명언이 수정되었습니다."));
             }
             case Delete -> {
                 Long inputId = request.getIdParam(input);

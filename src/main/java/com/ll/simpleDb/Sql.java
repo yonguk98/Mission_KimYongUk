@@ -1,6 +1,8 @@
 package com.ll.simpleDb;
 
 
+import com.ll.model.Article;
+
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
