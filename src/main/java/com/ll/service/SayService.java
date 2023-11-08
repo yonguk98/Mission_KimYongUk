@@ -5,7 +5,6 @@ import com.ll.simpleDb.SimpleDb;
 import com.ll.simpleDb.Sql;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class SayService {
@@ -28,58 +27,43 @@ public class SayService {
         }
     }
 
-    public void insertSayToDb(Long inputId){ // service 함수는 디비와 접근만하고 컨트롤러가 입력받도록 변경 필요?
-        System.out.print("명언: ");
-        String content = scanner.next();
-        System.out.print("작가: ");
-        String writer = scanner.next();
-
+    public long insertSayToDb(String writer, String content){
         Sql sql = simpleDb.genSql();
         sql.append("insert into article")
                 .append("SET createdDate = NOW()")
                 .append(", modifiedDate = NOW()")
                 .append(", title = ?", writer)
                 .append(", body = ?", content);
-        long id = sql.insert();
-        System.out.println(id + "번 명언이 등록되었습니다.");
+        return sql.insert();
     }
 
-    public void updateSay(Long inputId){
-        if(inputId==-1){
-            System.out.println("수정할 명언의 번호를 입력해주세요.");
-            return;
-        }
+    public long updateSay(Long inputId, String inputWriter, String inputContent){
         Sql sql = simpleDb.genSql();
-        sql.append("select * from article")
-                .append("where id = ?", inputId);
-        Map<String , Object> oldData = sql.selectRow();
-        System.out.println("명언(기존): " + oldData.get("body"));
-        System.out.print("명언: ");
-        String inputContent = scanner.next();
-
-        System.out.println("작가(기존): " + oldData.get("title"));
-        System.out.print("작가: ");
-        String inputWriter = scanner.next();
-
-        sql = simpleDb.genSql();
         sql.append("update article set")
                 .append("title = ?", inputWriter)
                 .append(",body = ?", inputContent)
                 .append("where id = ?", inputId);
-        long count = sql.update();
-        System.out.println(count + "개의 명언이 수정되었습니다.");
+        return sql.update();
+    }
+    public Article selectOne(Long inputId){
+        if(inputId==-1){
+            return null;
+        }
+        Sql sql = simpleDb.genSql();
+        sql.append("select * from article")
+                .append("where id = ?", inputId);
+        return sql.selectRow(Article.class);
     }
 
-    public void deleteSay(Long inputId){
+    public long deleteSay(Long inputId){
         if(inputId==-1){
             System.out.println("삭제할 명언의 번호를 다시 입력해주세요");
-            return;
+            return -1;
         }
         Sql sql = simpleDb.genSql();
         sql.append("delete from article")
                 .append("where id = ?",inputId);
-        long id = sql.delete();
-        System.out.println(id + "번 명언이 삭제되었습니다.");
+        return sql.delete();
     }
 
 }
