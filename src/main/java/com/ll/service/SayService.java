@@ -5,15 +5,12 @@ import com.ll.simpleDb.SimpleDb;
 import com.ll.simpleDb.Sql;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class SayService {
     private final SimpleDb simpleDb;
-    Scanner scanner;
 
     public SayService(SimpleDb simpleDb){
         this.simpleDb = simpleDb;
-        this.scanner = new Scanner(System.in);
     }
 
     public void showAll(){
@@ -37,33 +34,34 @@ public class SayService {
         return sql.insert();
     }
 
-    public long updateSay(Long inputId, String inputWriter, String inputContent){
-        Sql sql = simpleDb.genSql();
-        sql.append("update article set")
-                .append("title = ?", inputWriter)
-                .append(",body = ?", inputContent)
-                .append("where id = ?", inputId);
-        return sql.update();
-    }
     public Article selectOne(Long inputId){
-        if(inputId==-1){
-            return null;
-        }
         Sql sql = simpleDb.genSql();
         sql.append("select * from article")
                 .append("where id = ?", inputId);
         return sql.selectRow(Article.class);
     }
 
-    public long deleteSay(Long inputId){
-        if(inputId==-1){
-            System.out.println("삭제할 명언의 번호를 다시 입력해주세요");
-            return -1;
-        }
+    public Long updateSay(Long inputId, String inputWriter, String inputContent){
+        Sql sql = simpleDb.genSql();
+        sql.append("update article set")
+                .append("title = ?", inputWriter)
+                .append(",body = ?", inputContent)
+                .append("where id = ?", inputId);
+        return checkIdExistOne(inputId)? sql.update() : null;
+    }
+
+    public Long deleteSay(Long inputId){
         Sql sql = simpleDb.genSql();
         sql.append("delete from article")
                 .append("where id = ?",inputId);
-        return sql.delete();
+        return checkIdExistOne(inputId)? sql.delete() : null;
+    }
+
+    public boolean checkIdExistOne(long inputId){
+        Sql sql = simpleDb.genSql();
+        sql.append("select count(*) from article")
+                .append("where id = ?",inputId);
+        return sql.selectLong()==1? true : false;
     }
 
 }
