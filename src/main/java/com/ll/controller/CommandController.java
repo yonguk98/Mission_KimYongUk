@@ -1,8 +1,8 @@
 package com.ll.controller;
 
+import com.ll.model.Article;
 import com.ll.model.Command;
 import com.ll.service.SayService;
-import com.ll.model.Article;
 
 import java.util.Scanner;
 
@@ -22,7 +22,7 @@ public class CommandController {
         System.out.print("명령) ");
         String input = scanner.nextLine();
 
-        String[] inputString = input.split("\\?",2);
+        String[] inputString = input.split("\\?",0);
         Command cmd = request.findCmd(inputString[0]);
 
         switch (cmd){
@@ -37,7 +37,13 @@ public class CommandController {
                 System.out.println(id + "번 명언이 등록되었습니다.");
             }
             case Update -> {
-                Long inputId = request.getIdParam(inputString[1]);
+                Long inputId;
+                try {
+                    inputId = request.getIdParam(inputString[2]);
+                }catch (Exception e){
+                    System.out.println("수정할 명언의 번호를 입력해주세요.");
+                    break;
+                }
                 if(inputId==-1){
                     System.out.println("수정할 명언의 번호를 입력해주세요.");
                     break;
@@ -59,7 +65,13 @@ public class CommandController {
                         : "번 명언이 수정되었습니다."));
             }
             case Delete -> {
-                Long inputId = request.getIdParam(input);
+                Long inputId;
+                try {
+                    inputId = request.getIdParam(inputString[2]);
+                }catch (Exception e){
+                    System.out.println("삭제할 명언의 번호를 입력해주세요.");
+                    break;
+                }
                 if(inputId==-1){
                     System.out.println("삭제할 명언의 번호를 다시 입력해주세요");
                     break;
